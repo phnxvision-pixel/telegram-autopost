@@ -1,0 +1,16 @@
+.git
+.gitignore
+.env
+*.md
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+venv/
+env/
+.venv
+api.txt
+DEPLOY_KEY_INSTRUCTIONS.md
+DEPLOY_LOCAL.md
+render.yaml
+
