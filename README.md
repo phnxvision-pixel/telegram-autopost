@@ -79,7 +79,25 @@ Bot für automatisches Posten in Telegram-Gruppen mit Admin-Rechten.
 
 5. **Deploy** → Bot läuft automatisch
 
-### Option 2: Docker (empfohlen für eigene Server)
+### Option 2: Oracle Cloud Free Tier (⭐ EMPFOHLEN - kostenlos)
+
+**Komplett kostenloser VPS für immer!**
+
+Siehe **[DEPLOY_ORACLE_CLOUD.md](DEPLOY_ORACLE_CLOUD.md)** für detaillierte Anleitung.
+
+**Schnellstart:**
+1. Account erstellen: https://www.oracle.com/cloud/free/
+2. Ubuntu 22.04 VM erstellen (ARM, 6GB RAM)
+3. Docker installieren
+4. Bot deployen mit Docker Compose
+
+**Vorteile:**
+- ✅ Komplett kostenlos (für immer)
+- ✅ 24/7 Online
+- ✅ Genug für 100+ Gruppen
+- ✅ Keine Limits
+
+### Option 3: Docker (eigener Server/VPS)
 
 **Schnellstart mit Docker Compose:**
 
