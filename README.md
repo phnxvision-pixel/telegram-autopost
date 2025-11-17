@@ -36,7 +36,9 @@ Bot für automatisches Posten in Telegram-Gruppen mit Admin-Rechten.
    - `OWNER_ID` - Deine Telegram-ID
 4. Bot starten: `python bot.py`
 
-## Deployment auf Render.com
+## Deployment-Optionen
+
+### Option 1: Render.com (Cloud - kostenpflichtig)
 
 1. **Neuen Web Service erstellen**
    - Repository: `https://github.com/phnxvision-pixel/telegram-autopost`
@@ -59,6 +61,31 @@ Bot für automatisches Posten in Telegram-Gruppen mit Admin-Rechten.
    - `OWNER_ID` = Deine Telegram-ID (z.B. `123456789`)
 
 5. **Deploy** → Bot läuft automatisch
+
+### Option 2: Eigenen Server (kostenlos)
+
+**Schnellstart auf Linux:**
+
+```bash
+git clone https://github.com/phnxvision-pixel/telegram-autopost.git
+cd telegram-autopost
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+export TOKEN="8585985138:AAFDVzaQXjiyHGueoXMuH5IziC8e1X-mcLA"
+export GROUP_ID="-1001234567890"
+export OWNER_ID="123456789"
+python bot.py
+```
+
+**Als Systemd Service (automatischer Start):**
+
+Siehe `DEPLOY_LOCAL.md` für vollständige Anleitung mit systemd, Docker oder Windows Service.
+
+**Vorteile eigener Server:**
+- ✅ Kostenlos
+- ✅ Volle Kontrolle
+- ✅ Keine Limits
 
 ## Technologie
 

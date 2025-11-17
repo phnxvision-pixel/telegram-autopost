@@ -1,0 +1,20 @@
+[Unit]
+Description=Telegram Auto-Post Bot
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/telegram-autopost
+Environment="TOKEN=8585985138:AAFDVzaQXjiyHGueoXMuH5IziC8e1X-mcLA"
+Environment="GROUP_ID=-1001234567890"
+Environment="OWNER_ID=123456789"
+ExecStart=/opt/telegram-autopost/venv/bin/python bot.py
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+

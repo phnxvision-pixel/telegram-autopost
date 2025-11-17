@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  telegram-bot:
+    build: .
+    container_name: telegram-autopost-bot
+    restart: unless-stopped
+    environment:
+      - TOKEN=${TOKEN}
+      - GROUP_ID=${GROUP_ID}
+      - OWNER_ID=${OWNER_ID}
+    env_file:
+      - .env
+
