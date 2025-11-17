@@ -62,7 +62,28 @@ Bot für automatisches Posten in Telegram-Gruppen mit Admin-Rechten.
 
 5. **Deploy** → Bot läuft automatisch
 
-### Option 2: Eigenen Server (kostenlos)
+### Option 2: Docker (empfohlen für eigene Server)
+
+**Schnellstart mit Docker Compose:**
+
+```bash
+git clone https://github.com/phnxvision-pixel/telegram-autopost.git
+cd telegram-autopost
+
+# .env Datei erstellen
+cp .env.example .env
+nano .env  # Token, GROUP_ID, OWNER_ID eintragen
+
+# Container starten
+docker-compose up -d
+
+# Logs anzeigen
+docker-compose logs -f
+```
+
+**Siehe `DOCKER_DEPLOY.md` für vollständige Docker-Anleitung.**
+
+### Option 3: Eigenen Server (ohne Docker)
 
 **Schnellstart auf Linux:**
 
@@ -80,7 +101,7 @@ python bot.py
 
 **Als Systemd Service (automatischer Start):**
 
-Siehe `DEPLOY_LOCAL.md` für vollständige Anleitung mit systemd, Docker oder Windows Service.
+Siehe `DEPLOY_LOCAL.md` für vollständige Anleitung mit systemd oder Windows Service.
 
 **Vorteile eigener Server:**
 - ✅ Kostenlos
