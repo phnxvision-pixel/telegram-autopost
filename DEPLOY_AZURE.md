@@ -4,16 +4,43 @@
 
 Azure bietet mehrere kostenlose Optionen für Telegram-Bots. Hier sind die besten:
 
+## 🎓 Azure Student Account (BESTE OPTION!)
+
+**Wenn du ein Azure Student Abo hast:**
+- ✅ **$100 Credits pro Jahr** (12 Monate)
+- ✅ **Alle Azure Services** kostenlos nutzbar (innerhalb der Credits)
+- ✅ **Keine Kreditkarte nötig** (nur Studenten-Verifizierung)
+- ✅ **Mehr Ressourcen** als Free Tier
+
+**Für Telegram-Bots:** ⭐⭐⭐⭐⭐ Perfekt!
+
+### Student Account Vorteile:
+
+| Feature | Normal Free Tier | Student Account |
+|---------|------------------|-----------------|
+| Credits | $200 (30 Tage) | $100 (12 Monate) |
+| VM Größe | B1S (1GB RAM) | B2s (2GB RAM) oder größer |
+| Container Instances | 0.5GB RAM | Bis zu 4GB RAM |
+| Storage | 64GB | Mehr verfügbar |
+| Dauer | 30 Tage | 12 Monate |
+
 ## Option 1: Azure Container Instances (⭐ EMPFOHLEN)
 
 ### Kosten: Kostenlos mit Limits
 
-**Free Tier:**
+**Free Tier (ohne Student Account):**
 - ✅ Immer kostenlos (kein Ablauf)
 - ✅ Container laufen 24/7
 - ⚠️ Limit: 1 Container gleichzeitig
 - ⚠️ Limit: 0.1 CPU, 0.5GB RAM pro Container
 - ⚠️ Limit: 20GB Storage
+
+**Student Account:**
+- ✅ **$100 Credits pro Jahr** (12 Monate)
+- ✅ **Bis zu 4GB RAM** möglich
+- ✅ **Mehr CPU** verfügbar
+- ✅ **Mehr Storage**
+- ✅ Container laufen 24/7
 
 **Für Telegram-Bots:** ✅ Gut geeignet (läuft 24/7)
 
@@ -71,6 +98,22 @@ az acr create --resource-group telegram-bot-rg \
 
 **Option A: Direkt aus Docker Hub**
 
+**Für Student Account (mehr Ressourcen):**
+```bash
+az container create \
+  --resource-group telegram-bot-rg \
+  --name telegram-autopost-bot \
+  --image docker.io/yourusername/telegram-bot:latest \
+  --cpu 1.0 \
+  --memory 2.0 \
+  --environment-variables \
+    TOKEN="dein-bot-token" \
+    OWNER_ID="deine-telegram-id" \
+  --restart-policy Always \
+  --location westeurope
+```
+
+**Für Free Tier (weniger Ressourcen):**
 ```bash
 az container create \
   --resource-group telegram-bot-rg \
@@ -158,18 +201,27 @@ az webapp config appsettings set \
   --settings TOKEN="dein-bot-token" OWNER_ID="deine-telegram-id"
 ```
 
-## Option 3: Azure VM (Free Tier)
+## Option 3: Azure VM (⭐ BESTE OPTION FÜR STUDENT ACCOUNT)
 
-### Kosten: $200 Credits für 30 Tage, danach kostenpflichtig
+### Kosten: $100 Credits für 12 Monate (Student Account)
 
-**Free Tier:**
-- B1S VM (1 vCPU, 1GB RAM)
-- 64GB Storage
-- Nur 30 Tage kostenlos
+**Student Account:**
+- ✅ **B2s VM** (2 vCPU, 4GB RAM) möglich
+- ✅ **Oder B1s** (1 vCPU, 1GB RAM) für längere Laufzeit
+- ✅ **64GB+ Storage**
+- ✅ **12 Monate** kostenlos (innerhalb der Credits)
+- ✅ **Volle Kontrolle** wie eigener Server
 
-**Für Telegram-Bots:** ⚠️ Nur kurzfristig kostenlos
+**Für Telegram-Bots:** ⭐⭐⭐⭐⭐ Perfekt für Student Account!
 
-### Setup:
+**Kostenberechnung:**
+- B1s VM: ~$10/Monat → Läuft ~10 Monate kostenlos
+- B2s VM: ~$20/Monat → Läuft ~5 Monate kostenlos
+- Oder kleinere VM für längere Laufzeit
+
+### Setup für Student Account:
+
+**Option A: B1s VM (1 vCPU, 1GB RAM) - Längere Laufzeit**
 
 ```bash
 # VM erstellen
@@ -180,12 +232,46 @@ az vm create \
   --size Standard_B1s \
   --admin-username azureuser \
   --generate-ssh-keys \
-  --public-ip-sku Basic
+  --public-ip-sku Basic \
+  --location westeurope
 
 # SSH verbinden
 ssh azureuser@<PUBLIC_IP>
 
-# Dann Docker installieren und Bot deployen (siehe DEPLOY_LOCAL.md)
+# Docker installieren
+sudo apt update
+sudo apt install docker.io docker-compose -y
+sudo systemctl start docker
+sudo systemctl enable docker
+
+# Bot deployen
+git clone https://github.com/phnxvision-pixel/telegram-autopost.git
+cd telegram-autopost
+nano .env  # TOKEN, OWNER_ID eintragen
+docker-compose up -d
+```
+
+**Option B: B2s VM (2 vCPU, 4GB RAM) - Mehr Power**
+
+```bash
+# VM erstellen
+az vm create \
+  --resource-group telegram-bot-rg \
+  --name telegram-bot-vm \
+  --image Ubuntu2204 \
+  --size Standard_B2s \
+  --admin-username azureuser \
+  --generate-ssh-keys \
+  --public-ip-sku Basic \
+  --location westeurope
+
+# Dann wie oben weiter
+```
+
+**Kostenüberwachung:**
+```bash
+# Credits prüfen im Portal
+# Gehe zu: https://portal.azure.com → Cost Management + Billing
 ```
 
 ## Option 4: Azure Functions (nicht empfohlen)
@@ -199,30 +285,58 @@ ssh azureuser@<PUBLIC_IP>
 
 | Option | Kosten | 24/7 | Sleep-Mode | Empfehlung |
 |--------|--------|------|------------|------------|
-| **Container Instances** | ✅ Kostenlos | ✅ Ja | ❌ Nein | ⭐⭐⭐⭐⭐ |
+| **VM (Student)** | ✅ $100/Jahr | ✅ Ja | ❌ Nein | ⭐⭐⭐⭐⭐ |
+| **Container Instances** | ✅ Kostenlos | ✅ Ja | ❌ Nein | ⭐⭐⭐⭐ |
+| **Container Instances (Student)** | ✅ $100/Jahr | ✅ Ja | ❌ Nein | ⭐⭐⭐⭐⭐ |
 | **App Service** | ✅ Kostenlos | ❌ Nein | ⚠️ Ja | ⭐⭐ |
-| **VM** | ⚠️ 30 Tage | ✅ Ja | ❌ Nein | ⭐⭐⭐ |
+| **VM (Free Tier)** | ⚠️ 30 Tage | ✅ Ja | ❌ Nein | ⭐⭐⭐ |
 | **Functions** | ✅ Kostenlos | ❌ Nein | ⚠️ Ja | ⭐ |
 
-## 🎯 Empfehlung: Azure Container Instances
+## 🎯 Empfehlung für Student Account
+
+### Option 1: Azure VM (BESTE WAHL FÜR STUDENT)
+
+**Warum:**
+- ✅ **$100 Credits für 12 Monate**
+- ✅ **B2s VM möglich** (2 vCPU, 4GB RAM)
+- ✅ **Volle Kontrolle** wie eigener Server
+- ✅ **Läuft 24/7** (kein Sleep-Mode)
+- ✅ **Genug für 100+ Gruppen**
+
+**Setup:** Siehe Option 3 oben
+
+### Option 2: Azure Container Instances (Student)
+
+**Warum:**
+- ✅ **$100 Credits für 12 Monate**
+- ✅ **Bis zu 4GB RAM** möglich
+- ✅ **Einfaches Deployment**
+- ✅ **Automatischer Neustart**
+
+**Limits (mit Student Credits):**
+- Bis zu 1 CPU, 4GB RAM
+- Mehr als Free Tier (0.1 CPU, 0.5GB RAM)
+
+### Option 3: Azure Container Instances (Free Tier)
 
 **Warum:**
 - ✅ Immer kostenlos (kein Ablauf)
 - ✅ Läuft 24/7 (kein Sleep-Mode)
 - ✅ Einfaches Deployment
-- ✅ Automatischer Neustart bei Fehlern
 
 **Limits:**
 - 0.1 CPU, 0.5GB RAM (ausreichend für Telegram-Bot)
-- 1 Container gleichzeitig (ausreichend für Multi-Group Bot)
+- 1 Container gleichzeitig
 
 ## Kostenvergleich (1 Jahr)
 
 | Option | Kosten/Jahr | Bemerkung |
 |--------|-------------|-----------|
-| **Container Instances** | **€0** | Immer kostenlos |
+| **VM (Student)** | **€0** | $100 Credits für 12 Monate |
+| **Container Instances (Student)** | **€0** | $100 Credits für 12 Monate |
+| **Container Instances (Free)** | **€0** | Immer kostenlos |
 | **App Service** | **€0** | Sleep-Mode Problem |
-| **VM** | **€0-300** | Nach 30 Tagen kostenpflichtig |
+| **VM (Free Tier)** | **€0-300** | Nach 30 Tagen kostenpflichtig |
 
 ## Nützliche Azure CLI Befehle
 
@@ -281,25 +395,42 @@ az container create \
 
 ## Fazit
 
-**Für Azure:**
-- ✅ **Container Instances** → Beste kostenlose Option
-- ✅ Läuft 24/7
+### Für Student Account:
+
+**🏆 BESTE WAHL: Azure VM (B2s)**
+- ✅ $100 Credits für 12 Monate
+- ✅ 2 vCPU, 4GB RAM
+- ✅ Volle Kontrolle
+- ✅ Genug für 100+ Gruppen
+
+**Alternative: Azure Container Instances**
+- ✅ $100 Credits für 12 Monate
+- ✅ Bis zu 4GB RAM möglich
+- ✅ Einfaches Deployment
+
+### Für normale Free Tier:
+
+**Azure Container Instances**
 - ✅ Immer kostenlos
+- ✅ Läuft 24/7
 - ⚠️ Limit: 0.5GB RAM (ausreichend für Bot)
 
-**Alternative:**
-- Oracle Cloud Free Tier → Mehr Ressourcen (6GB RAM)
-- Siehe `DEPLOY_ORACLE_CLOUD.md`
+### Vergleich: Azure Student vs Oracle Cloud
 
-## Vergleich: Azure vs Oracle Cloud
+| Feature | Azure VM (Student) | Azure Container Instances (Student) | Oracle Cloud |
+|---------|-------------------|-------------------------------------|--------------|
+| Kosten | ✅ $100/Jahr | ✅ $100/Jahr | ✅ Kostenlos |
+| RAM | 4GB (B2s) | Bis zu 4GB | 6GB |
+| CPU | 2 vCPU (B2s) | Bis zu 1 vCPU | 1-4 vCPU |
+| 24/7 | ✅ Ja | ✅ Ja | ✅ Ja |
+| Setup | Mittel | Einfach | Einfach |
+| Dauer | 12 Monate | 12 Monate | Für immer |
 
-| Feature | Azure Container Instances | Oracle Cloud |
-|---------|--------------------------|--------------|
-| Kosten | ✅ Kostenlos | ✅ Kostenlos |
-| RAM | 0.5GB | 6GB |
-| CPU | 0.1 vCPU | 1-4 vCPU |
-| 24/7 | ✅ Ja | ✅ Ja |
-| Setup | Mittel | Einfach |
+**Empfehlung für Student:**
+- **Azure VM (B2s)** → Beste Option mit Student Credits
+- **Oder Oracle Cloud** → Mehr Ressourcen, für immer kostenlos
 
-**Empfehlung:** Oracle Cloud bietet mehr Ressourcen, aber Azure Container Instances ist auch eine gute Option!
+**Empfehlung ohne Student:**
+- **Oracle Cloud Free Tier** → Mehr Ressourcen (6GB RAM)
+- **Oder Azure Container Instances** → Immer kostenlos
 
