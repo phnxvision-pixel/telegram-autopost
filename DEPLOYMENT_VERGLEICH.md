@@ -113,6 +113,7 @@ docker-compose up -d
 | **Fly.io** | ✅ Kostenlos | 3GB | Shared | ✅ Ja | ⭐⭐⭐⭐ |
 | **Google Cloud** | ✅ 90 Tage | 0.6GB | 1 vCPU | ✅ Ja | ⭐⭐⭐ |
 | **AWS** | ✅ 12 Monate | 1GB | 1 vCPU | ✅ Ja | ⭐⭐⭐ |
+| **Azure Container Instances** | ✅ Kostenlos | 0.5GB | 0.1 vCPU | ✅ Ja | ⭐⭐⭐⭐ |
 | **Render.com** | ✅ Kostenlos | 512MB | Shared | ❌ Sleep | ⭐⭐ |
 | **Railway** | ⚠️ $5/Monat | 512MB | Shared | ✅ Ja | ⭐⭐ |
 
@@ -149,7 +150,13 @@ docker-compose up -d
 docker-compose logs -f
 ```
 
-### Für Test/Entwicklung:
+### Alternative Optionen:
+
+**Azure Container Instances**
+- ✅ Kostenlos (immer)
+- ✅ 24/7 Online
+- ⚠️ Limit: 0.5GB RAM
+- Siehe `DEPLOY_AZURE.md`
 
 **Fly.io** oder **Eigener Server**
 - Schnell eingerichtet
