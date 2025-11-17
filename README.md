@@ -38,10 +38,27 @@ Bot für automatisches Posten in Telegram-Gruppen mit Admin-Rechten.
 
 ## Deployment auf Render.com
 
-1. Repository verbinden
-2. Environment-Variablen setzen
-3. Build Command: `pip install -r requirements.txt`
-4. Start Command: `python bot.py`
+1. **Neuen Web Service erstellen**
+   - Repository: `https://github.com/phnxvision-pixel/telegram-autopost`
+   - Environment: `Python 3`
+   - Region: `Frankfurt` (oder deine Präferenz)
+
+2. **Build Command:**
+   ```
+   pip install -r requirements.txt
+   ```
+
+3. **Start Command:**
+   ```
+   python bot.py
+   ```
+
+4. **Environment-Variablen setzen:**
+   - `TOKEN` = `8585985138:AAFDVzaQXjiyHGueoXMuH5IziC8e1X-mcLA`
+   - `GROUP_ID` = Deine Gruppen-ID (negativ, z.B. `-1001234567890`)
+   - `OWNER_ID` = Deine Telegram-ID (z.B. `123456789`)
+
+5. **Deploy** → Bot läuft automatisch
 
 ## Technologie
 
