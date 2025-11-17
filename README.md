@@ -2,6 +2,10 @@
 
 Bot für automatisches Posten in Telegram-Gruppen mit Admin-Rechten.
 
+## 🚀 Für Käufer - Schnellstart
+
+**Neuer Käufer?** Siehe **[QUICK_START.md](QUICK_START.md)** für die 5-Minuten-Einrichtung oder **[SETUP_GUIDE.md](SETUP_GUIDE.md)** für die vollständige Anleitung.
+
 ## Features
 
 - **Admin-Only**: Nur Gruppen-Administratoren können Befehle ausführen
