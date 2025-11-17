@@ -33,7 +33,6 @@ Der Bot sollte mit einer Begrüßungsnachricht und allen verfügbaren Befehlen a
 
 **Einfachste Methode - Weiterleitung:**
 - **Nachricht weiterleiten:** Eine Nachricht (Text oder Bild) in die Gruppe weiterleiten → wird automatisch gespeichert
-- **Normale Nachricht:** Einfach Text oder Bild in die Gruppe senden → wird automatisch gespeichert
 
 **Alternative Methoden:**
 - **Text hinzufügen:**
@@ -105,7 +104,6 @@ Der Bot sollte mit einer Begrüßungsnachricht und allen verfügbaren Befehlen a
 
 1. **Inhalte sammeln (einfach weiterleiten):**
    - Weiterleite 5-10 Motivationsnachrichten in die Gruppe
-   - Oder sende sie direkt in die Gruppe
    - Der Bot speichert sie automatisch
 
 2. **Auto-Posting aktivieren:**
