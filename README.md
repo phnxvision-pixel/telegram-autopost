@@ -15,6 +15,8 @@ Bot für automatisches Posten in Telegram-Gruppen mit Admin-Rechten.
 
 **Willst du den Bot verkaufen?** Siehe **[VERKAEUFER_SETUP.md](VERKAEUFER_SETUP.md)** für die Einrichtung.
 
+**⚠️ WICHTIG:** Verwende **`bot_multi_group.py`** für Multi-Group Support! Diese Version unterstützt unbegrenzt viele Gruppen gleichzeitig, jede mit eigener Warteschlange.
+
 **Technisches Setup:** Siehe **[QUICK_START.md](QUICK_START.md)** oder **[SETUP_GUIDE.md](SETUP_GUIDE.md)**.
 
 ## Features

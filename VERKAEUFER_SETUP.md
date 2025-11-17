@@ -23,8 +23,12 @@ Diese Anleitung zeigt dir, wie du den Bot so einrichtest, dass mehrere Käufer i
    - Username: z.B. `@group_help`
 
 2. **Bot deployen:**
+   - **WICHTIG:** Verwende `bot_multi_group.py` für Multi-Group Support!
+   - In `docker-compose.yml` oder `bot.py` durch `bot_multi_group.py` ersetzen
    - Siehe `DOCKER_DEPLOY.md` oder `DEPLOY_LOCAL.md`
    - Bot läuft auf deinem Server
+   
+   **Für Docker:** Ändere `CMD ["python", "bot.py"]` zu `CMD ["python", "bot_multi_group.py"]` im Dockerfile
 
 ### Schritt 2: Bot für Käufer freigeben
 
