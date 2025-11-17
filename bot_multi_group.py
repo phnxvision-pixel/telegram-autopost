@@ -110,15 +110,15 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
         "🤖 Admin-Only Poster aktiv\n\n"
         "Nur Gruppen-Administratoren dürfen:\n"
-        "/addtext <Text>\n"
-        "/addimage → Bild hochladen\n"
-        "Nachricht weiterleiten → wird gespeichert\n"
+        "/addtext <Text> → Text hinzufügen\n"
+        "Bild senden → wird gespeichert\n"
+        "Nachricht weiterleiten → wird automatisch gespeichert\n"
         "/queue → Warteschlange anzeigen\n"
         "/settext <Text> → Fester Text setzen\n"
         "/setmedia → Fester Text + Bild kombinieren\n"
         "/randommode → Zurück zur Zufalls-Warteschlange\n"
         "/post → Manuell posten\n"
-        "/schedule → Auto-Posting planen\n"
+        "/schedule <Minuten> → Auto-Posting (z.B. /schedule 30)\n"
         "/stop → Auto-Posting stoppen\n\n"
         "Nur Owner:\n/clear → Warteschlange leeren"
     )
@@ -176,11 +176,15 @@ async def handle_forward(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     group_data = get_group_data(update.effective_chat.id)
     
     try:
+        added = False
+        
         if update.message.text:
             group_data['queue'].append({
                 'type': 'text',
                 'content': update.message.text_html or update.message.text
             })
+            added = True
+        
         if update.message.photo:
             file_id = update.message.photo[-1].file_id
             group_data['queue'].append({
@@ -188,10 +192,13 @@ async def handle_forward(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 'file_id': file_id,
                 'caption': update.message.caption_html or update.message.caption or ""
             })
-        await update.message.reply_text(
-            f"✅ Weitergeleitet von Admin {update.effective_user.first_name}"
-        )
-        logger.info(f"Weiterleitung hinzugefügt von Admin {update.effective_user.id} in Gruppe {update.effective_chat.id}")
+            added = True
+        
+        if added:
+            await update.message.reply_text(
+                f"✅ Weitergeleitet und gespeichert von Admin {update.effective_user.first_name}"
+            )
+            logger.info(f"Weiterleitung hinzugefügt von Admin {update.effective_user.id} in Gruppe {update.effective_chat.id}")
     except Exception as e:
         logger.error(f"Fehler bei Weiterleitung: {e}")
 
@@ -240,12 +247,19 @@ def create_post_job(chat_id: int):
 
 
 async def schedule(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    """Auto-Posting planen (nur Admins)"""
+    """Auto-Posting planen (nur Admins) - Minuten-Auswahl"""
     if not await only_admins_filter(update, context):
         return
     
     if not context.args:
-        await update.message.reply_text("❌ Nutze: /schedule 30min | 1h | 4h | daily")
+        await update.message.reply_text(
+            "❌ Nutze: /schedule <Minuten>\n\n"
+            "Beispiele:\n"
+            "/schedule 15  → alle 15 Minuten\n"
+            "/schedule 30  → alle 30 Minuten\n"
+            "/schedule 60  → stündlich\n"
+            "/schedule 240 → alle 4 Stunden"
+        )
         return
     
     chat_id = update.effective_chat.id
@@ -259,43 +273,51 @@ async def schedule(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         job_data = {'chat_id': chat_id}
         post_job = create_post_job(chat_id)
         
-        if arg == "30min":
-            context.job_queue.run_repeating(
-                post_job,
-                interval=1800,
-                first=10,
-                data=job_data
-            )
-            msg = "alle 30 Minuten"
-        elif arg == "1h":
-            context.job_queue.run_repeating(
-                post_job,
-                interval=3600,
-                first=10,
-                data=job_data
-            )
-            msg = "stündlich"
-        elif arg == "4h":
-            context.job_queue.run_repeating(
-                post_job,
-                interval=14400,
-                first=10,
-                data=job_data
-            )
-            msg = "alle 4 Stunden"
-        elif arg == "daily":
-            context.job_queue.run_daily(
-                post_job,
-                time=time(12, 0),
-                data=job_data
-            )
-            msg = "täglich um 12:00"
+        if arg.endswith('min'):
+            minutes = int(arg[:-3])
+        elif arg.isdigit():
+            minutes = int(arg)
         else:
-            await update.message.reply_text("❌ Unbekanntes Intervall")
+            await update.message.reply_text("❌ Bitte gib die Minuten als Zahl an (z.B. /schedule 30)")
             return
         
-        await update.message.reply_text(f"✅ Auto-Posting: {msg}")
-        logger.info(f"Scheduling geändert: {msg} von Admin {update.effective_user.id} in Gruppe {chat_id}")
+        if minutes < 1:
+            await update.message.reply_text("❌ Mindestens 1 Minute")
+            return
+        
+        if minutes > 1440:
+            await update.message.reply_text("❌ Maximal 1440 Minuten (24 Stunden)")
+            return
+        
+        interval_seconds = minutes * 60
+        
+        context.job_queue.run_repeating(
+            post_job,
+            interval=interval_seconds,
+            first=10,
+            data=job_data
+        )
+        
+        if minutes == 1:
+            msg = "jede Minute"
+        elif minutes < 60:
+            msg = f"alle {minutes} Minuten"
+        elif minutes == 60:
+            msg = "stündlich"
+        elif minutes < 1440:
+            hours = minutes // 60
+            remaining_minutes = minutes % 60
+            if remaining_minutes == 0:
+                msg = f"alle {hours} Stunden"
+            else:
+                msg = f"alle {hours} Stunden und {remaining_minutes} Minuten"
+        else:
+            msg = "täglich"
+        
+        await update.message.reply_text(f"✅ Auto-Posting aktiviert: {msg}")
+        logger.info(f"Scheduling geändert: {msg} ({minutes} Min) von Admin {update.effective_user.id} in Gruppe {chat_id}")
+    except ValueError:
+        await update.message.reply_text("❌ Bitte gib eine gültige Zahl an (z.B. /schedule 30)")
     except Exception as e:
         logger.error(f"Fehler beim Scheduling: {e}")
         await update.message.reply_text("❌ Fehler beim Setzen des Schedules")
@@ -415,7 +437,7 @@ async def register_commands(app: Application) -> None:
         BotCommand("setmedia", "Fester Text + Bild kombinieren"),
         BotCommand("randommode", "Zurück zur Zufalls-Warteschlange"),
         BotCommand("post", "Manuell posten"),
-        BotCommand("schedule", "Auto-Posting planen"),
+        BotCommand("schedule", "Auto-Posting planen (z.B. /schedule 30)"),
         BotCommand("stop", "Auto-Posting stoppen"),
         BotCommand("clear", "Warteschlange leeren (nur Owner)"),
     ]

@@ -31,6 +31,11 @@ Der Bot sollte mit einer Begrüßungsnachricht und allen verfügbaren Befehlen a
 
 ### 📝 Inhalte hinzufügen
 
+**Einfachste Methode - Weiterleitung:**
+- **Nachricht weiterleiten:** Eine Nachricht (Text oder Bild) in die Gruppe weiterleiten → wird automatisch gespeichert
+- **Normale Nachricht:** Einfach Text oder Bild in die Gruppe senden → wird automatisch gespeichert
+
+**Alternative Methoden:**
 - **Text hinzufügen:**
   ```
   /addtext Dein Text hier
@@ -38,9 +43,6 @@ Der Bot sollte mit einer Begrüßungsnachricht und allen verfügbaren Befehlen a
 
 - **Bild hinzufügen:**
   Einfach ein Bild in die Gruppe senden (Bot muss Admin sein)
-
-- **Nachricht speichern:**
-  Eine Nachricht in die Gruppe weiterleiten → wird automatisch gespeichert
 
 ### 📋 Warteschlange verwalten
 
@@ -73,13 +75,16 @@ Der Bot sollte mit einer Begrüßungsnachricht und allen verfügbaren Befehlen a
   ```
   Postet sofort einen zufälligen Eintrag aus der Warteschlange
 
-- **Auto-Posting aktivieren:**
+- **Auto-Posting aktivieren (Minuten-Auswahl):**
   ```
-  /schedule 30min    # Alle 30 Minuten
-  /schedule 1h       # Stündlich
-  /schedule 4h       # Alle 4 Stunden
-  /schedule daily    # Täglich um 12:00
+  /schedule 15   # Alle 15 Minuten
+  /schedule 30   # Alle 30 Minuten
+  /schedule 60   # Stündlich (60 Minuten)
+  /schedule 120  # Alle 2 Stunden
+  /schedule 240  # Alle 4 Stunden
   ```
+  
+  Du kannst **beliebige Minuten** angeben (1-1440 Minuten = 24 Stunden)
 
 - **Auto-Posting stoppen:**
   ```
@@ -98,20 +103,22 @@ Der Bot sollte mit einer Begrüßungsnachricht und allen verfügbaren Befehlen a
 
 ### Szenario: Tägliche Motivationsposts
 
-1. **Inhalte sammeln:**
-   ```
-   /addtext 🚀 Starte deinen Tag mit Energie!
-   /addtext 💪 Du schaffst das!
-   /addtext ✨ Heute wird ein großartiger Tag!
-   ```
-   (Oder Bilder senden)
+1. **Inhalte sammeln (einfach weiterleiten):**
+   - Weiterleite 5-10 Motivationsnachrichten in die Gruppe
+   - Oder sende sie direkt in die Gruppe
+   - Der Bot speichert sie automatisch
 
 2. **Auto-Posting aktivieren:**
    ```
-   /schedule daily
+   /schedule 1440  # Alle 24 Stunden (täglich)
+   ```
+   Oder für häufigeres Posten:
+   ```
+   /schedule 60    # Stündlich
+   /schedule 120   # Alle 2 Stunden
    ```
 
-3. **Fertig!** Der Bot postet jetzt täglich um 12:00 einen zufälligen Eintrag.
+3. **Fertig!** Der Bot postet jetzt automatisch zufällige Einträge aus deiner Sammlung.
 
 ### Szenario: Fester Werbetext
 
@@ -128,7 +135,7 @@ Der Bot sollte mit einer Begrüßungsnachricht und allen verfügbaren Befehlen a
 
 3. **Auto-Posting aktivieren:**
    ```
-   /schedule 4h
+   /schedule 240  # Alle 4 Stunden (240 Minuten)
    ```
 
 4. **Fertig!** Der Bot postet jetzt alle 4 Stunden deinen festen Text (+ Bild).
