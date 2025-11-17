@@ -58,10 +58,32 @@ Azure bietet mehrere kostenlose Optionen für Telegram-Bots. Hier sind die beste
 
 **Windows:**
 ```powershell
-# Download: https://aka.ms/installazurecliwindows
-# Oder mit winget:
+# Option 1: Mit winget (empfohlen)
 winget install -e --id Microsoft.AzureCLI
+
+# Option 2: Download Installer
+# https://aka.ms/installazurecliwindows
+# Installer ausführen, Terminal neu starten
+
+# Option 3: Mit Chocolatey
+choco install azure-cli
 ```
+
+**⚠️ WICHTIG:** Nach Installation Terminal komplett neu starten!
+
+**Installation prüfen:**
+```bash
+az --version
+```
+
+**Git Bash Nutzer:** Falls `az` nicht funktioniert:
+```bash
+# Verwende az.cmd statt az
+az.cmd login
+# Oder PowerShell verwenden
+```
+
+**Detaillierte Anleitung:** Siehe `AZURE_CLI_INSTALL.md`
 
 **Linux:**
 ```bash
