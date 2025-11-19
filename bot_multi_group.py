@@ -6,7 +6,7 @@ from collections import defaultdict
 
 from telegram import Update, BotCommand
 from telegram.ext import Application, CommandHandler, MessageHandler, ContextTypes, filters
-from telegram.constants import ChatMemberStatus
+from telegram.constants import ChatMemberStatus, ChatType
 
 TOKEN = os.getenv("TOKEN")
 OWNER_ID = int(os.getenv("OWNER_ID", "0"))
@@ -48,7 +48,10 @@ def is_owner(user_id: int) -> bool:
 
 async def only_admins_filter(update: Update, context: ContextTypes.DEFAULT_TYPE) -> bool:
     """Filter: Nur Admins in Gruppen"""
-    if update.effective_chat.type not in ('group', 'supergroup'):
+    if not update.effective_chat or not update.effective_user:
+        return False
+    chat_type = update.effective_chat.type
+    if chat_type not in (ChatType.GROUP, ChatType.SUPERGROUP):
         return False
     return await is_group_admin(context.bot, update.effective_user.id, update.effective_chat.id)
 
@@ -107,6 +110,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not await only_admins_filter(update, context):
         return
     
+    if not update.message:
+        return
+    
     await update.message.reply_text(
         "🤖 Admin-Only Poster aktiv\n\n"
         "Nur Gruppen-Administratoren dürfen:\n"
@@ -122,12 +128,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "/stop → Auto-Posting stoppen\n\n"
         "Nur Owner:\n/clear → Warteschlange leeren"
     )
-    logger.info(f"Start-Befehl von Admin {update.effective_user.id} in Gruppe {update.effective_chat.id}")
+    if update.effective_user and update.effective_chat:
+        logger.info(f"Start-Befehl von Admin {update.effective_user.id} in Gruppe {update.effective_chat.id}")
 
 
 async def add_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Text zur Queue hinzufügen"""
     if not await only_admins_filter(update, context):
+        return
+    
+    if not update.message:
         return
     
     if not context.args:
@@ -148,7 +158,7 @@ async def handle_image(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     if not await only_admins_filter(update, context):
         return
     
-    if not update.message.photo:
+    if not update.message or not update.message.photo:
         return
     
     group_data = get_group_data(update.effective_chat.id)
@@ -170,7 +180,7 @@ async def handle_forward(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     if not await only_admins_filter(update, context):
         return
     
-    if not update.message.forward_date:
+    if not update.message or not update.message.forward_date:
         return
     
     group_data = get_group_data(update.effective_chat.id)
@@ -208,6 +218,9 @@ async def show_queue(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     if not await only_admins_filter(update, context):
         return
     
+    if not update.message:
+        return
+    
     group_data = get_group_data(update.effective_chat.id)
     
     if not group_data['queue']:
@@ -234,6 +247,9 @@ async def post_now(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not await only_admins_filter(update, context):
         return
     
+    if not update.message:
+        return
+    
     await send_random_from_queue(context, update.effective_chat.id)
     await update.message.reply_text("✅ Manuell gepostet")
     logger.info(f"Manuelles Posting von Admin {update.effective_user.id} in Gruppe {update.effective_chat.id}")
@@ -249,6 +265,9 @@ def create_post_job(chat_id: int):
 async def schedule(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Auto-Posting planen (nur Admins) - Minuten-Auswahl"""
     if not await only_admins_filter(update, context):
+        return
+    
+    if not update.message:
         return
     
     if not context.args:
@@ -328,6 +347,9 @@ async def stop(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not await only_admins_filter(update, context):
         return
     
+    if not update.message:
+        return
+    
     chat_id = update.effective_chat.id
     
     for job in context.job_queue.jobs():
@@ -340,6 +362,9 @@ async def stop(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def clear(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Queue leeren (nur Owner)"""
+    if not update.message or not update.effective_user:
+        return
+    
     if not is_owner(update.effective_user.id):
         return
     
@@ -352,6 +377,9 @@ async def clear(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def set_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Festen Text setzen (nur Admins)"""
     if not await only_admins_filter(update, context):
+        return
+    
+    if not update.message:
         return
     
     if not context.args:
@@ -376,6 +404,9 @@ async def set_media(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not await only_admins_filter(update, context):
         return
     
+    if not update.message:
+        return
+    
     group_data = get_group_data(update.effective_chat.id)
     
     if group_data['fixed_text'] is None:
@@ -396,6 +427,9 @@ async def random_mode(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     if not await only_admins_filter(update, context):
         return
     
+    if not update.message:
+        return
+    
     group_data = get_group_data(update.effective_chat.id)
     
     group_data['fixed_text'] = None
@@ -412,6 +446,9 @@ async def random_mode(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
 async def handle_fixed_media(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Handler für festes Bild nach /setmedia"""
     if not await only_admins_filter(update, context):
+        return
+    
+    if not update.message:
         return
     
     group_data = get_group_data(update.effective_chat.id)
