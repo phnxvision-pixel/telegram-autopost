@@ -7,7 +7,7 @@ Bot für automatisches Posten in Telegram-Gruppen mit Admin-Rechten.
 **Du hast den Bot gekauft?** Der Bot läuft bereits online! Siehe **[KAEUFER_ANLEITUNG.md](KAEUFER_ANLEITUNG.md)** für die komplette Anleitung.
 
 **Kurzfassung:**
-1. Bot zu deiner Gruppe hinzufügen: `@group_help` (oder dein Bot-Username)
+1. Bot zu deiner Gruppe hinzufügen: `@dein_bot_username` (vom Verkäufer erhalten)
 2. Bot als Admin hinzufügen
 3. `/start` senden → Bot ist einsatzbereit!
 
